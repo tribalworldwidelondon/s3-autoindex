@@ -25,6 +25,11 @@ export interface AWSConfig {
   s3ForcePathStyle: boolean;
 }
 
+export interface Html {
+  header: string;
+  footer: string;
+}
+
 export interface Config {
   version: string;
   basepath: string;
@@ -33,6 +38,7 @@ export interface Config {
   s3: S3;
   aws: AWSConfig;
   aws_module: string;
+  html: Html;
 }
 
 export default function parseConfig(argv: string[]): Config {
@@ -88,6 +94,12 @@ export default function parseConfig(argv: string[]): Config {
   }).option('aws-s3ForcePathStyle', {
     describe: 'path-style bucket access',
     default: true
+  }).option('html-header', {
+    describe: 'optional HTML header, replacing the default bucket name AND path',
+    default: process.env.HTML_HEADER
+  }).option('html-footer', {
+    describe: 'optional HTML footer',
+    default: process.env.HTML_FOOTER
   }).help().parse(argv);
   const cred = {
     accessKeyId: y.argv.awsAccessKeyId,
@@ -116,6 +128,10 @@ export default function parseConfig(argv: string[]): Config {
       sslEnabled: y.argv.awsSslEnabled,
       // With this setup, you must use path-style bucket access
       s3ForcePathStyle: y.argv.awsS3ForcePathStyle,
+    },
+    html: {
+      header: y.argv.htmlHeader,
+      footer: y.argv.htmlFooter
     }
   };
   if (y.argv.httpsPrivateKey && y.argv.httpsCertificate) {

@@ -38,7 +38,7 @@ function loopListObjects(rq: simqle.Queue, s3: AWS.S3, config: Config, mypath: s
 }
 
 function top(config: any, prefix: string): string {
-  return `<html>
+  return `config.html.header` ? config.html.header : `<html>
   <head>
     <title>Index of s3://${config.s3.Bucket}/${prefix}</title>
   </head>
@@ -48,8 +48,8 @@ function top(config: any, prefix: string): string {
     <pre>\n`;
 }
 
-function footer(): string {
-  return `    </pre>
+function footer(config: any): string {
+  return config.html.footer ? config.html.footer : `    </pre>
   </body>
 </html>`;
 }
@@ -117,7 +117,7 @@ function loopDirectoryItem(mypath: string, cps: (AWS.S3.CommonPrefix | AWS.S3.Ob
 //     resolvHeadObject(mypath, so, res, rq, rapp, s3, config, cpl);
 //     return cpl;
 //   }).match(rxme.Matcher.Complete(() => {
-//     // res.write(footer());
+//     // res.write(footer(config));
 //     // res.end();
 //   })).passTo();
 // }
@@ -195,7 +195,7 @@ export default function directoryMatcher(rq: simqle.Queue, rapp: rxme.Subject,
       doneCount += nr;
       // console.log(`DoneCount:${doneCount}:${needsDoneCount}`);
       if (doneCount >= needsDoneCount) {
-        res.write(footer());
+        res.write(footer(config));
         res.end();
         done.complete();
       }
